@@ -33,19 +33,58 @@ class WeatherService {
   }
   // TODO: Define the baseURL, API key, and city name properties
   // TODO: Create fetchLocationData method
-  // private async fetchLocationData(query: string) {}
+     private async fetchLocationData(query: string): Promise<Coordinates> {
+     const response = await axios.get(`${this.baseURL}/geo/1.0/direct`, {
+      params: {
+        q: query,
+        limit: 1,
+        appid: this.apiKey,
+      },
+    });
+    const data = response.data[0];
+    return { lat: data.lat, lon: data.lon };
+  }
+
   // TODO: Create destructureLocationData method
-  // private destructureLocationData(locationData: Coordinates): Coordinates {}
-  // TODO: Create buildGeocodeQuery method
-  // private buildGeocodeQuery(): string {}
+      private destructureLocationData(locationData: Coordinates): Coordinates {
+      return {
+      lat: locationData.lat,
+      lon: locationData.lon,
+    };
+  }
+  
   // TODO: Create buildWeatherQuery method
-  // private buildWeatherQuery(coordinates: Coordinates): string {}
+     private buildWeatherQuery(coordinates: Coordinates): string {
+     return `${this.baseURL}/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&units=imperial&appid=${this.apiKey}`;
+  }
   // TODO: Create fetchAndDestructureLocationData method
-  // private async fetchAndDestructureLocationData() {}
+    private async fetchAndDestructureLocationData(city: string): Promise<Coordinates> {
+    const locationData = await this.fetchLocationData(city);
+    return this.destructureLocationData(locationData);
+  }
+}
   // TODO: Create fetchWeatherData method
-  // private async fetchWeatherData(coordinates: Coordinates) {}
+    private async fetchWeatherData(coordinates: Coordinates): Promise<any> {
+    const url = this.buildWeatherQuery(coordinates);
+    const response = await axios.get(url);
+    return response.data;
+  }
   // TODO: Build parseCurrentWeather method
-  // private parseCurrentWeather(response: any) {}
+  private parseCurrentWeather(response: any, city: string): Weather {
+    const { temp, humidity, wind_speed: windSpeed } = response.current;
+    const { description, icon } = response.current.weather[0];
+    const tempF = Math.round(temp);
+
+    return new Weather(
+      city,
+      this.formatDate(response.current.dt),
+      icon,
+      description,
+      tempF,
+      windSpeed,
+      humidity
+    );
+  }
   // TODO: Complete buildForecastArray method
   // private buildForecastArray(currentWeather: Weather, weatherData: any[]) {}
   // TODO: Complete getWeatherForCity method
