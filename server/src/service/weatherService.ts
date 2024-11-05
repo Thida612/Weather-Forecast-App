@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 dotenv.config();
 
-
 // TODO: Define an interface for the Coordinates object
 interface Coordinates {
   lat: number;
@@ -10,8 +9,8 @@ interface Coordinates {
 }
 
 // TODO: Define a class for the Weather object
-    class Weather {
-    constructor(
+class Weather {
+  constructor(
     public city: string,
     public date: string,
     public icon: string,
@@ -31,10 +30,10 @@ class WeatherService {
     this.baseURL = 'https://api.openweathermap.org';
     this.apiKey = process.env.API_KEY || '';
   }
-  // TODO: Define the baseURL, API key, and city name properties
-  // TODO: Create fetchLocationData method
-     private async fetchLocationData(query: string): Promise<Coordinates> {
-     const response = await axios.get(`${this.baseURL}/geo/1.0/direct`, {
+
+  // TODO: Create fetchLocationData method to retrieve coordinates based on city name
+  private async fetchLocationData(query: string): Promise<Coordinates> {
+    const response = await axios.get(`${this.baseURL}/geo/1.0/direct`, {
       params: {
         q: query,
         limit: 1,
@@ -45,31 +44,27 @@ class WeatherService {
     return { lat: data.lat, lon: data.lon };
   }
 
-  // TODO: Create destructureLocationData method
-      private destructureLocationData(locationData: Coordinates): Coordinates {
-      return {
+  // TODO: Create method to destructure location data
+  private destructureLocationData(locationData: Coordinates): Coordinates {
+    return {
       lat: locationData.lat,
       lon: locationData.lon,
     };
   }
-  
-  // TODO: Create buildWeatherQuery method
-     private buildWeatherQuery(coordinates: Coordinates): string {
-     return `${this.baseURL}/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&units=imperial&appid=${this.apiKey}`;
+
+  // TODO: Build the weather query URL for retrieving forecast
+  private buildWeatherQuery(coordinates: Coordinates): string {
+    return `${this.baseURL}/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&units=imperial&appid=${this.apiKey}`;
   }
-  // TODO: Create fetchAndDestructureLocationData method
-    private async fetchAndDestructureLocationData(city: string): Promise<Coordinates> {
-    const locationData = await this.fetchLocationData(city);
-    return this.destructureLocationData(locationData);
-  }
-}
-  // TODO: Create fetchWeatherData method
-    private async fetchWeatherData(coordinates: Coordinates): Promise<any> {
+
+  // TODO: Fetch weather data using buildWeatherQuery for URL
+  private async fetchWeatherData(coordinates: Coordinates): Promise<any> {
     const url = this.buildWeatherQuery(coordinates);
     const response = await axios.get(url);
     return response.data;
   }
-  // TODO: Build parseCurrentWeather method
+
+  // TODO: Parse current weather data
   private parseCurrentWeather(response: any, city: string): Weather {
     const { temp, humidity, wind_speed: windSpeed } = response.current;
     const { description, icon } = response.current.weather[0];
@@ -85,33 +80,39 @@ class WeatherService {
       humidity
     );
   }
-  // TODO: Complete buildForecastArray method
-      private buildForecastArray(daily: any[], city: string): Weather[] {
-    // Limit to 5 days of forecast
-      return daily.slice(1, 6).map((day: any) => {
-      const { day: temp } = day.temp;
-      const { description, icon } = day.weather[0];
-      const tempF = Math.round(temp);
-      const { wind_speed: windSpeed, humidity } = day;
-  
-      return new Weather(
-        city,
-        this.formatDate(day.dt),
-        icon,
-        description,
-        tempF,
-        windSpeed,
-        humidity
-      );
-    });
-  }
+
+// TODO: Build an array of forecast objects for upcoming days
+private buildForecastArray(daily: any[], city: string): Weather[] {
+  // Limit to 5 days of forecast
+  return daily.slice(1, 6).map((day: any) => {
+    const { day: temp } = day.temp;
+    const { description, icon } = day.weather[0];
+    const tempF = Math.round(temp);
+    const { wind_speed: windSpeed, humidity } = day;
+
+    return new Weather(
+      city,
+      this.formatDate(day.dt),
+      icon,
+      description,
+      tempF,
+      windSpeed,
+      humidity
+    );
+  });
+}
+
+
   // Format Unix timestamp to 'DD-MM-YYYY'
 private formatDate(unixTimestamp: number): string {
   const date = new Date(unixTimestamp * 1000);
   return date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-  // TODO: Complete getWeatherForCity method
+
+  
+
+  // TODO: Complete getWeatherForCity method to retrieve weather for a city
   async getWeatherForCity(city: string): Promise<Weather[]> {
     const coordinates = await this.fetchAndDestructureLocationData(city);
     const weatherData = await this.fetchWeatherData(coordinates);
@@ -123,9 +124,10 @@ private formatDate(unixTimestamp: number): string {
   }
 
   // TODO: Create fetchAndDestructureLocationData method
-    private async fetchAndDestructureLocationData(city: string): Promise<Coordinates> {
+  private async fetchAndDestructureLocationData(city: string): Promise<Coordinates> {
     const locationData = await this.fetchLocationData(city);
     return this.destructureLocationData(locationData);
   }
 }
+
 export default new WeatherService();
