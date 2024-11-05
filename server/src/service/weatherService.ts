@@ -86,9 +86,46 @@ class WeatherService {
     );
   }
   // TODO: Complete buildForecastArray method
-  // private buildForecastArray(currentWeather: Weather, weatherData: any[]) {}
-  // TODO: Complete getWeatherForCity method
-  // async getWeatherForCity(city: string) {}
+      private buildForecastArray(daily: any[], city: string): Weather[] {
+    // Limit to 5 days of forecast
+      return daily.slice(1, 6).map((day: any) => {
+      const { day: temp } = day.temp;
+      const { description, icon } = day.weather[0];
+      const tempF = Math.round(temp);
+      const { wind_speed: windSpeed, humidity } = day;
+  
+      return new Weather(
+        city,
+        this.formatDate(day.dt),
+        icon,
+        description,
+        tempF,
+        windSpeed,
+        humidity
+      );
+    });
+  }
+  // Format Unix timestamp to 'DD-MM-YYYY'
+private formatDate(unixTimestamp: number): string {
+  const date = new Date(unixTimestamp * 1000);
+  return date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
+  // TODO: Complete getWeatherForCity method
+  async getWeatherForCity(city: string): Promise<Weather[]> {
+    const coordinates = await this.fetchAndDestructureLocationData(city);
+    const weatherData = await this.fetchWeatherData(coordinates);
+
+    const currentWeather = this.parseCurrentWeather(weatherData, city);
+    const forecast = this.buildForecastArray(weatherData.daily.slice(1), city);
+
+    return [currentWeather, ...forecast];
+  }
+
+  // TODO: Create fetchAndDestructureLocationData method
+    private async fetchAndDestructureLocationData(city: string): Promise<Coordinates> {
+    const locationData = await this.fetchLocationData(city);
+    return this.destructureLocationData(locationData);
+  }
+}
 export default new WeatherService();
