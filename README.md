@@ -18,11 +18,10 @@ The Weather Forecast App is a full-stack web application that allows users to se
 
 ## Installation 
 To set up the Weather Forecast App, follow these steps:
-1. Ensure you have Node.js installed on your computer.
-2. Download the project files and open them in your source code editor.
-3. Open a new terminal connected to the project folder.
-4. Run npm install to install all dependencies.
-5. Navigate to the .env file in the root directory of the project and add your OpenWeatherMap API key and API BASE URL=https://api.openweathermap.org/data/2.5/forecast.
+1. Download the project files and open them in your source code editor.
+2. Open a new terminal connected to the project folder.
+3. Run npm install to install all dependencies.
+4. Navigate to the .env file in the root directory of the project and add your OpenWeatherMap API key and API BASE URL=https://api.openweathermap.org/data/2.5/forecast.
 
 
 ## Usage 
