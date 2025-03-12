@@ -22,7 +22,8 @@ To set up the Weather Forecast App, follow these steps:
 2. Download the project files and open them in your source code editor.
 3. Open a new terminal connected to the project folder.
 4. Run npm install to install all dependencies.
-5. Create a .env file in the root directory of the project and add your OpenWeatherMap API key as   follows: OPENWEATHERMAP_API_KEY=your_api_key.
+5. Navigate to the .env file in the root directory of the project and add your OpenWeatherMap API key and API BASE URL=https://api.openweathermap.org/data/2.5/forecast.
+
 
 ## Usage 
 Once you have installed all dependencies and set up the .env file, follow these steps to run the app:
@@ -44,6 +45,10 @@ N/A
 ## Contact Me:
 * Email: angelic722@gmail.com
 * Github: Thida612
+
+## Deployed Link:
+https://weather-forecast-app-3.onrender.com <br><br>
+![Weather Forecast App Screenshot](client/image/screenshot.png)
 
 
 
